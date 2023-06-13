@@ -1,0 +1,17 @@
+#user {
+  text-align: center;
+}
+
+nav {
+  float: right;
+}
+
+strong {
+  margin: 10 0;
+  display: flex;
+}
+
+#result {
+  text-align: center;
+  margin-top: 50px;
+}
