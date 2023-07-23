@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.parcel-cache/
+.github/
+.vscode/
+node_modules/
+.git/
+.gitignore
