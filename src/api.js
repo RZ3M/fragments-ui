@@ -20,6 +20,7 @@ export async function getUserFragments(user) {
     console.log("Got user fragments data", data.fragments);
 
     // display it for the user to see
+    // as a list
     const listContainer = document.createElement("ul");
     data.fragments.forEach((fragmentID) => {
       const listItem = document.createElement("li");
@@ -29,8 +30,38 @@ export async function getUserFragments(user) {
     const fraglist = document.getElementById("fragmentList");
     fraglist.innerHTML = "";
     fraglist.appendChild(listContainer);
+
+    // display as a json
+    // const pre = document.createElement("pre");
+    // pre.innerHTML = JSON.stringify(data, undefined, 4);
+    // const fraglist = document.getElementById("fragmentList");
+    // fraglist.innerHTML = "";
+    // fraglist.appendChild(pre);
   } catch (err) {
     console.error("Unable to call GET /v1/fragment", { err });
+  }
+}
+
+export async function getUserFragmentExpand(user) {
+  console.log("Requesting user fragments data...");
+  try {
+    const res = await fetch(`${apiUrl}/v1/fragments/?expand=1`, {
+      headers: user.authorizationHeaders(),
+    });
+    if (!res.ok) {
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    const data = await res.json();
+    console.log(data.fragments);
+
+    // display it for the user to see
+    const pre = document.createElement("pre");
+    pre.innerHTML = JSON.stringify(data, undefined, 4);
+    const fraglist = document.getElementById("fragmentList");
+    fraglist.innerHTML = "";
+    fraglist.appendChild(pre);
+  } catch (err) {
+    console.error("Unable to call GET /v1/fragment/?expand=1", { err });
   }
 }
 
@@ -45,7 +76,7 @@ export async function postUserFragments(user, data, type) {
       method: "post",
       headers: {
         Authorization: `Bearer ${user.idToken}`,
-        "Content-type": type,
+        "Content-Type": type,
       },
       body: data,
     });
@@ -84,5 +115,29 @@ export async function getFragmentDataByID(user, id) {
     }
   } catch (err) {
     console.log(`Unable to call GET /v1/fragments/${id}`, { err });
+  }
+}
+
+export async function getFragmentInfo(user, id) {
+  console.log(`Requesting user fragments info by id...${id}`);
+  console.log(`Fetching ${apiUrl}/v1/fragments/${id}/info`);
+  try {
+    const res = await fetch(`${apiUrl}/v1/fragments/${id}/info`, {
+      headers: user.authorizationHeaders(),
+    });
+    if (!res.ok) {
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    let data = await res.json();
+    console.log(data);
+
+    // display as a json
+    const pre = document.createElement("pre");
+    pre.innerHTML = JSON.stringify(data, undefined, 4);
+    const fraglist = document.getElementById("returnedData");
+    fraglist.innerHTML = "";
+    fraglist.appendChild(pre);
+  } catch (err) {
+    console.error(`Unable to call GET /v1/fragments/${id}/info`, { err });
   }
 }

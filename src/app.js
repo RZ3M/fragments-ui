@@ -1,12 +1,10 @@
 import { Auth, getUser } from "./auth";
 import {
   getUserFragments,
-  getUserFragmentList,
+  getUserFragmentExpand,
   postUserFragments,
   getFragmentDataByID,
-  getFragmentInfoByID,
-  deleteFragmentDataByID,
-  updateFragmentByID,
+  getFragmentInfo,
 } from "./api";
 
 async function init() {
@@ -17,7 +15,9 @@ async function init() {
   const postSection = document.querySelector("#post");
   const postButton = document.querySelector("#postButton");
   const getButton = document.querySelector("#getButton");
+  const getExpandButton = document.querySelector("#getExpandButton");
   const getByIdButton = document.querySelector("#getByIdButton");
+  const getInfoByIdButton = document.querySelector("#getInfoByIdButton");
 
   // Wire up event handlers to deal with login and logout.
   loginButton.onclick = () => {
@@ -51,9 +51,23 @@ async function init() {
     getUserFragments(user);
   };
 
+  // get the list of fragments id for the authenticated user
+  getExpandButton.onclick = () => {
+    getUserFragmentExpand(user);
+  };
+
   getByIdButton.onclick = () => {
     let id = document.querySelector("#id").value;
+    document.getElementById("receivedTitle").innerHTML =
+      "Received Fragment Data:";
     getFragmentDataByID(user, id);
+  };
+
+  getInfoByIdButton.onclick = () => {
+    let id = document.querySelector("#id").value;
+    document.getElementById("receivedTitle").innerHTML =
+      "Received Fragment Info:";
+    getFragmentInfo(user, id);
   };
 
   // Log the user info for debugging purposes

@@ -23,20 +23,24 @@
     <section hidden id="post">
       <strong>Get fragments:</strong>
       <button type="submit" id="getButton">GET list of fragments</button>
+      <button type="submit" id="getExpandButton">
+        GET list of fragments expand
+      </button>
       <br />
 
       <strong>Find fragment by ID:</strong>
       <input type="text" id="id" placeholder="Enter fragment's ID" />
       <br /><br />
       <button type="submit" id="getByIdButton">GET fragment's data</button>
+      <button type="submit" id="getInfoByIdButton">GET fragment's info</button>
 
       <strong>Create Fragment:</strong>
       <label>Choose a fragment type:</label>
       <select name="types" id="types" required>
         <option value="text/plain">text/plain</option>
-        <!-- <option value="text/html">text/html</option>
+        <option value="text/html">text/html</option>
         <option value="text/markdown">text/markdown</option>
-        <option value="application/json">application/json</option> -->
+        <option value="application/json">application/json</option>
       </select>
       <hr />
 
@@ -47,9 +51,9 @@
       ></textarea>
       <button type="submit" id="postButton">POST</button>
 
-      <h4 id="result">Fragments:</h4>
+      <h4>Fragments:</h4>
       <div id="fragmentList"></div>
-      <h4 id="result">Received Fragment Data:</h4>
+      <h4 id="receivedTitle">Received Fragment Data:</h4>
       <div id="returnedData"></div>
     </section>
   </body>
