@@ -38,7 +38,7 @@ export async function getUserFragments(user) {
     // fraglist.innerHTML = "";
     // fraglist.appendChild(pre);
   } catch (err) {
-    console.error("Unable to call GET /v1/fragment", { err });
+    console.error(`Unable to call GET ${apiUrl}/v1/fragment`, { err });
   }
 }
 
@@ -61,7 +61,7 @@ export async function getUserFragmentExpand(user) {
     fraglist.innerHTML = "";
     fraglist.appendChild(pre);
   } catch (err) {
-    console.error("Unable to call GET /v1/fragment/?expand=1", { err });
+    console.error(`Unable to call GET ${apiUrl}/v1/fragment/?expand=1`, { err });
   }
 }
 
@@ -88,7 +88,7 @@ export async function postUserFragments(user, data, type) {
     console.log("Posted user fragments data: ", data);
     console.log(res);
   } catch (err) {
-    console.error("Unable to call POST /v1/fragments", { err });
+    console.error(`Unable to call POST ${apiUrl}/v1/fragments`, { err });
   }
 }
 
@@ -114,7 +114,7 @@ export async function getFragmentDataByID(user, id) {
       console.log("Error: ID required");
     }
   } catch (err) {
-    console.log(`Unable to call GET /v1/fragments/${id}`, { err });
+    console.log(`Unable to call GET ${apiUrl}/v1/fragments/${id}`, { err });
   }
 }
 
@@ -138,6 +138,6 @@ export async function getFragmentInfo(user, id) {
     fraglist.innerHTML = "";
     fraglist.appendChild(pre);
   } catch (err) {
-    console.error(`Unable to call GET /v1/fragments/${id}/info`, { err });
+    console.error(`Unable to call GET ${apiUrl}/v1/fragments/${id}/info`, { err });
   }
 }
