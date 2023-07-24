@@ -41,8 +41,8 @@ async function init() {
 
   // post the fragment
   postButton.onclick = () => {
-    let data = document.querySelector("#data").value;
-    let type = document.querySelector("#types").value;
+    let data = document.querySelector("#data").value || "";
+    let type = document.querySelector("#types").value || "";
     postUserFragments(user, data, type);
   };
 
