@@ -28,11 +28,12 @@
       </button>
       <br />
 
-      <strong>Find fragment by ID:</strong>
+      <strong>Fragment by ID:</strong>
       <input type="text" id="id" placeholder="Enter fragment's ID" />
       <br /><br />
       <button type="submit" id="getByIdButton">GET fragment's data</button>
       <button type="submit" id="getInfoByIdButton">GET fragment's info</button>
+      <button type="submit" id="deleteButton">DELETE</button>
 
       <strong>Create Fragment:</strong>
       <label>Choose a fragment type:</label>
@@ -50,6 +51,13 @@
         placeholder="Enter fragment data"
       ></textarea>
       <button type="submit" id="postButton">POST</button>
+      <button type="submit" id="putButton">PUT</button>
+
+      <br /><br />
+      <input type="file" name="file" id="file" />
+      <br /><br />
+      <button name="submit" id="uploadButton">POST Image</button>
+      <button name="submit" id="updateImageButton">PUT Image</button>
 
       <h4>Fragments:</h4>
       <div id="fragmentList"></div>

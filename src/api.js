@@ -24,19 +24,59 @@ export async function getUserFragments(user) {
     const listContainer = document.createElement("ul");
     data.fragments.forEach((fragmentID) => {
       const listItem = document.createElement("li");
-      listItem.textContent = fragmentID;
+
+      // Create the text node for the fragment ID
+      const textNode = document.createTextNode(fragmentID);
+      listItem.appendChild(textNode);
+
+      // Create a link and event listener to it
+      const getDataLink = document.createElement("a");
+      getDataLink.textContent = "GET DATA";
+      getDataLink.style.marginLeft = "10px";
+      getDataLink.href = "#";
+      getDataLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelector("#id").value = fragmentID;
+        getFragmentDataByID(user, fragmentID);
+        document.getElementById("receivedTitle").innerHTML =
+          "Received Fragment Data:";
+      });
+      listItem.appendChild(getDataLink);
+
+      // Create a link and event listener to it
+      const getInfoLink = document.createElement("a");
+      getInfoLink.textContent = "GET INFO";
+      getInfoLink.style.marginLeft = "10px";
+      getInfoLink.href = "#";
+      getInfoLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelector("#id").value = fragmentID;
+        getFragmentInfo(user, fragmentID);
+        document.getElementById("receivedTitle").innerHTML =
+          "Received Fragment Info:";
+      });
+      listItem.appendChild(getInfoLink);
+
+      // Create a link and event listener to it
+      const deleteLink = document.createElement("a");
+      deleteLink.textContent = "DELETE";
+      deleteLink.style.marginLeft = "10px";
+      deleteLink.href = "#";
+      deleteLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelector("#id").value = fragmentID;
+        deleteFragmentDataById(user, fragmentID);
+        clearData("f");
+        getUserFragments(user);
+      });
+      listItem.appendChild(deleteLink);
+
+      // Add the completed list item to the list container
       listContainer.appendChild(listItem);
     });
     const fraglist = document.getElementById("fragmentList");
     fraglist.innerHTML = "";
     fraglist.appendChild(listContainer);
-
-    // display as a json
-    // const pre = document.createElement("pre");
-    // pre.innerHTML = JSON.stringify(data, undefined, 4);
-    // const fraglist = document.getElementById("fragmentList");
-    // fraglist.innerHTML = "";
-    // fraglist.appendChild(pre);
   } catch (err) {
     console.error(`Unable to call GET ${apiUrl}/v1/fragment`, { err });
   }
@@ -61,7 +101,9 @@ export async function getUserFragmentExpand(user) {
     fraglist.innerHTML = "";
     fraglist.appendChild(pre);
   } catch (err) {
-    console.error(`Unable to call GET ${apiUrl}/v1/fragment/?expand=1`, { err });
+    console.error(`Unable to call GET ${apiUrl}/v1/fragment/?expand=1`, {
+      err,
+    });
   }
 }
 
@@ -84,10 +126,11 @@ export async function postUserFragments(user, data, type) {
     if (!res.ok) {
       throw new Error(`${res.status} ${res.statusText}`);
     }
-
+    alert("Successfully Posted Fragment!");
     console.log("Posted user fragments data: ", data);
     console.log(res);
   } catch (err) {
+    alert("Error Posting Fragment");
     console.error(`Unable to call POST ${apiUrl}/v1/fragments`, { err });
   }
 }
@@ -105,15 +148,41 @@ export async function getFragmentDataByID(user, id) {
         throw new Error(`${res.status} ${res.statusText}`);
       }
 
-      const data = await res.text();
-      console.log("Received:", data);
-      document.getElementById("returnedData").innerHTML = data;
+      const type = res.headers.get("Content-Type");
+      // text
+      if (type.includes("text")) {
+        const data = await res.text();
+        console.log("Received:", data);
+        document.getElementById("returnedData").innerHTML = data;
+      }
+      // image
+      if (type.startsWith("image/")) {
+        const data = await res.blob();
+        console.log("Received:", data);
+
+        var img = document.createElement("img");
+        img.src = URL.createObjectURL(data);
+        const display = document.getElementById("returnedData");
+        display.innerHTML = "";
+        display.appendChild(img);
+      }
+      // json
+      if (type.includes("json")) {
+        const data = await res.json();
+
+        // display as a json
+        const pre = document.createElement("pre");
+        pre.innerHTML = JSON.stringify(data, undefined, 4);
+        const display = document.getElementById("returnedData");
+        display.innerHTML = "";
+        display.appendChild(pre);
+      }
     } else {
-      document.getElementById("returnedData").textContent =
-        "Error: ID required";
-      console.log("Error: ID required");
+      alert("Error: ID required!");
+      console.log("Error: ID required!");
     }
   } catch (err) {
+    alert("Error: Invalid ID!");
     console.log(`Unable to call GET ${apiUrl}/v1/fragments/${id}`, { err });
   }
 }
@@ -138,6 +207,69 @@ export async function getFragmentInfo(user, id) {
     fraglist.innerHTML = "";
     fraglist.appendChild(pre);
   } catch (err) {
-    console.error(`Unable to call GET ${apiUrl}/v1/fragments/${id}/info`, { err });
+    alert("Error: Invalid ID!");
+    console.error(`Unable to call GET ${apiUrl}/v1/fragments/${id}/info`, {
+      err,
+    });
+  }
+}
+
+export async function putUserFragments(user, data, type, id) {
+  console.log("Updating user fragments data...");
+  try {
+    if (type == "application/json") {
+      data = JSON.parse(JSON.stringify(data));
+    }
+    const res = await fetch(`${apiUrl}/v1/fragments/${id}`, {
+      method: "put",
+      headers: {
+        // Include the user's ID Token in the request so we're authorized
+        Authorization: `Bearer ${user.idToken}`,
+        "Content-type": type,
+      },
+      body: data,
+    });
+
+    if (!res.ok) {
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    alert("Successfully updated fragment data!");
+    console.log("Updated user fragments data", data);
+    console.log(res);
+  } catch (err) {
+    alert("Failed to update fragment data!");
+    console.error("Unable to call PUT /v1/fragment", { err });
+  }
+}
+
+export async function deleteFragmentDataById(user, id) {
+  console.log(`Deleting user fragment with id: ${id}`);
+  try {
+    const res = await fetch(`${apiUrl}/v1/fragments/${id}`, {
+      method: "delete",
+      headers: user.authorizationHeaders(),
+    });
+
+    if (!res.ok) {
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    clearData("fr");
+    alert("Successfully deleted Fragment!");
+    console.log(`Fragment ${id} successfully deleted`);
+    console.log(res);
+  } catch (err) {
+    alert("Error: Invalid ID!");
+    console.error(`Unable to call DELETE /v1/fragments/${id}`, { err });
+  }
+}
+
+export function clearData(option) {
+  if (option.includes("f")) {
+    const fraglist = document.getElementById("fragmentList");
+    fraglist.innerHTML = "";
+  }
+  if (option.includes("r")) {
+    const returnedData = document.getElementById("returnedData");
+    returnedData.innerHTML = "";
   }
 }
